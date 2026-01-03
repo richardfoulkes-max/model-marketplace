@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Direct - Transparent Booking Marketplace</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #e11d48;
+            --primary-dark: #be123c;
+            --secondary: #0f172a;
+            --accent: #f43f5e;
+            --bg: #fafafa;
+            --card: #ffffff;
+            --text: #1e293b;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header .tagline {
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--primary);
+            display: inline-block;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .problem-card {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+
+        .problem-card .icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .problem-card h4 {
+            color: #dc2626;
+            margin-bottom: 0.5rem;
+        }
+
+        .solution-card {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+
+        .solution-card .icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .solution-card h4 {
+            color: #16a34a;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .feature-table th,
+        .feature-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .feature-table th {
+            background: var(--secondary);
+            color: white;
+            font-weight: 600;
+        }
+
+        .feature-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .badge-new {
+            background: var(--primary);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .badge-ai {
+            background: #8b5cf6;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-col h3 {
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .comparison-col.old h3 {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .comparison-col.new h3 {
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+
+        .comparison-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .comparison-item:last-child {
+            border-bottom: none;
+        }
+
+        .flow-diagram {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+        }
+
+        .flow-step {
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .flow-step .icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 0.75rem;
+        }
+
+        .flow-step .label {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .flow-step .desc {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        .flow-arrow {
+            font-size: 1.5rem;
+            color: var(--muted);
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .tech-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .tech-card .name {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .tech-card .purpose {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2rem;
+            top: 0.25rem;
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .timeline-item h4 {
+            color: var(--secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-item .time {
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .timeline-item p {
+            color: var(--muted);
+            margin-top: 0.5rem;
+        }
+
+        .cost-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .cost-table th,
+        .cost-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cost-table th {
+            background: #f8fafc;
+            font-weight: 600;
+        }
+
+        .cost-table .amount {
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .cost-table .total {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .revenue-model {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .revenue-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .revenue-card .percent {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .revenue-card .label {
+            opacity: 0.9;
+        }
+
+        .cta-section {
+            background: var(--secondary);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            border-radius: 16px;
+            margin-top: 2rem;
+        }
+
+        .cta-section h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            opacity: 0.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .next-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            text-align: left;
+        }
+
+        .next-step {
+            background: rgba(255,255,255,0.1);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .next-step h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .ai-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .ai-card {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .ai-card h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .ai-card p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .screens {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .screen-mockup {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .screen-header {
+            background: var(--secondary);
+            color: white;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .screen-body {
+            padding: 1rem;
+        }
+
+        .mock-profile {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+
+        .mock-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+            border-radius: 8px;
+        }
+
+        .mock-info h5 {
+            color: var(--secondary);
+        }
+
+        .mock-info p {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        .mock-price {
+            margin-left: auto;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .mock-job {
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+
+        .mock-job-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .mock-job h5 {
+            color: var(--secondary);
+        }
+
+        .mock-job .fee {
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .mock-job .details {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        .mock-tag {
+            display: inline-block;
+            background: #e0e7ff;
+            color: #4338ca;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-right: 0.25rem;
+        }
+
+        .transparency-box {
+            background: #fffbeb;
+            border: 2px solid #fcd34d;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 0.75rem;
+        }
+
+        .transparency-box h5 {
+            color: #b45309;
+            margin-bottom: 0.5rem;
+        }
+
+        .transparency-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.25rem 0;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Model Direct</h1>
+        <p class="tagline">Transparent Booking Marketplace for Commercial Models</p>
+        <span class="badge">MVP Concept Document</span>
+    </div>
+
+    <div class="container">
+        <!-- The Problem -->
+        <div class="section">
+            <h2 class="section-title">The Problem</h2>
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <div class="icon">💸</div>
+                    <h4>Hidden Markups</h4>
+                    <p>Same job quoted at £1,000 by one agent and £2,500 by another. Agents claim 25-33% but actually take 60%+.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="icon">🔀</div>
+                    <h4>Fragmented Agents</h4>
+                    <p>Models have 20+ agents across the country. Same job comes through 3 different agents at different rates.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="icon">❌</div>
+                    <h4>No Cancellation Protection</h4>
+                    <p>Brands cancel day-before with no compensation. No deposits, no security, no consequences.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="icon">🎭</div>
+                    <h4>Zero Transparency</h4>
+                    <p>Models never know the real client budget. Agents pocket the difference with no accountability.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Before vs After -->
+        <div class="section">
+            <h2 class="section-title">The Transformation</h2>
+            <div class="comparison">
+                <div class="comparison-col old">
+                    <h3>Current System</h3>
+                    <div class="comparison-item">
+                        <span>❌</span>
+                        <div>
+                            <strong>Hidden fees</strong>
+                            <p>Agent claims 25%, actually takes 60%</p>
+                        </div>
+                    </div>
+                    <div class="comparison-item">
+                        <span>❌</span>
+                        <div>
+                            <strong>No payment security</strong>
+                            <p>Paid weeks/months later, sometimes never</p>
+                        </div>
+                    </div>
+                    <div class="comparison-item">
+                        <span>❌</span>
+                        <div>
+                            <strong>Cancellation = nothing</strong>
+                            <p>Lose a day's work, get £0</p>
+                        </div>
+                    </div>
+                    <div class="comparison-item">
+                        <span>❌</span>
+                        <div>
+                            <strong>Multiple agents, same job</strong>
+                            <p>Confusion, missed opportunities</p>
+                        </div>
+                    </div>
+                    <div class="comparison-item">
+                        <span>❌</span>
+                        <div>
+                            <strong>No market rate visibility</strong>
+                            <p>No idea if you're being underpaid</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="comparison-col new">
+                    <h3>Model Direct</h3>
+                    <div class="comparison-item">
+                        <span>✅</span>
+                        <div>
+                            <strong>Transparent 15% platform fee</strong>
+                            <p>See exactly what brand pays, what you receive</p>
+                        </div>
+                    </div>
+                    <div class="comparison-item">
+                        <span>✅</span>
+                        <div>
+                            <strong>Escrow payments</strong>
+                            <p>50% upfront in escrow, 50% on completion</p>
+                        </div>
+                    </div>
+                    <div class="comparison-item">
+                        <span>✅</span>
+                        <div>
+                            <strong>Cancellation fees enforced</strong>
+                            <p>&lt;48hrs = 50%, &lt;24hrs = 100%</p>
+                        </div>
+                    </div>
+                    <div class="comparison-item">
+                        <span>✅</span>
+                        <div>
+                            <strong>One platform, all jobs</strong>
+                            <p>Direct brand access, no duplicates</p>
+                        </div>
+                    </div>
+                    <div class="comparison-item">
+                        <span>✅</span>
+                        <div>
+                            <strong>Market rate benchmarks</strong>
+                            <p>AI shows: "This is 20% below market"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- How It Works -->
+        <div class="section">
+            <h2 class="section-title">How It Works</h2>
+            <div class="flow-diagram">
+                <div class="flow-step">
+                    <div class="icon">🏢</div>
+                    <div class="label">Brand Posts Job</div>
+                    <div class="desc">Budget, requirements, dates</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="icon">🤖</div>
+                    <div class="label">AI Matches</div>
+                    <div class="desc">Right models notified</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="icon">👤</div>
+                    <div class="label">Model Applies</div>
+                    <div class="desc">Sees full fee upfront</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="icon">💳</div>
+                    <div class="label">Escrow Payment</div>
+                    <div class="desc">50% held securely</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="icon">✨</div>
+                    <div class="label">Job Complete</div>
+                    <div class="desc">Full payment released</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen Mockups -->
+        <div class="section">
+            <h2 class="section-title">Platform Screens</h2>
+            <div class="screens">
+                <div class="screen-mockup">
+                    <div class="screen-header">Model View - Available Jobs</div>
+                    <div class="screen-body">
+                        <div class="mock-job">
+                            <div class="mock-job-header">
+                                <h5>Nike Campaign - Fitness</h5>
+                                <span class="fee">£1,200/day</span>
+                            </div>
+                            <p class="details">London • Jan 15-16 • 2 days</p>
+                            <div style="margin-top: 0.5rem;">
+                                <span class="mock-tag">Commercial</span>
+                                <span class="mock-tag">Fitness</span>
+                                <span class="mock-tag">25-35</span>
+                            </div>
+                            <div class="transparency-box">
+                                <h5>Fee Breakdown (Transparent)</h5>
+                                <div class="transparency-row">
+                                    <span>Client Budget:</span>
+                                    <span>£1,412</span>
+                                </div>
+                                <div class="transparency-row">
+                                    <span>Platform Fee (15%):</span>
+                                    <span>-£212</span>
+                                </div>
+                                <div class="transparency-row" style="font-weight: 700; border-top: 1px solid #fcd34d; padding-top: 0.5rem;">
+                                    <span>Your Fee:</span>
+                                    <span style="color: #16a34a;">£1,200</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mock-job">
+                            <div class="mock-job-header">
+                                <h5>ASOS E-commerce Shoot</h5>
+                                <span class="fee">£850/day</span>
+                            </div>
+                            <p class="details">Manchester • Jan 20 • 1 day</p>
+                            <div style="margin-top: 0.5rem;">
+                                <span class="mock-tag">E-commerce</span>
+                                <span class="mock-tag">Fashion</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="screen-mockup">
+                    <div class="screen-header">Brand View - Find Models</div>
+                    <div class="screen-body">
+                        <div class="mock-profile">
+                            <div class="mock-avatar"></div>
+                            <div class="mock-info">
+                                <h5>Sarah M.</h5>
+                                <p>Commercial • Fitness • London</p>
+                                <p>⭐ 4.9 (47 jobs)</p>
+                            </div>
+                            <div class="mock-price">£1,000/day</div>
+                        </div>
+                        <div class="mock-profile">
+                            <div class="mock-avatar"></div>
+                            <div class="mock-info">
+                                <h5>James K.</h5>
+                                <p>Commercial • Lifestyle • Manchester</p>
+                                <p>⭐ 4.8 (32 jobs)</p>
+                            </div>
+                            <div class="mock-price">£850/day</div>
+                        </div>
+                        <div class="mock-profile">
+                            <div class="mock-avatar"></div>
+                            <div class="mock-info">
+                                <h5>Emma T.</h5>
+                                <p>E-commerce • Beauty • London</p>
+                                <p>⭐ 5.0 (28 jobs)</p>
+                            </div>
+                            <div class="mock-price">£1,200/day</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Features -->
+        <div class="section">
+            <h2 class="section-title">AI-Powered Features</h2>
+            <div class="ai-features">
+                <div class="ai-card">
+                    <h4>🎯 Smart Matching</h4>
+                    <p>Brand uploads brief → AI analyzes requirements and suggests best-fit models based on look, experience, location, availability.</p>
+                </div>
+                <div class="ai-card">
+                    <h4>📸 Auto Portfolio Tagging</h4>
+                    <p>Upload photos → AI automatically tags: look type, age range, hair color, body type, style categories. No manual entry.</p>
+                </div>
+                <div class="ai-card">
+                    <h4>💰 Price Benchmarking</h4>
+                    <p>"This rate is 25% below market average for London commercial work" - Models never undersell, brands pay fair rates.</p>
+                </div>
+                <div class="ai-card">
+                    <h4>🚩 Red Flag Detection</h4>
+                    <p>Warns models: "This brand has 2 late payment complaints" or "3 last-minute cancellations". Protects both sides.</p>
+                </div>
+                <div class="ai-card">
+                    <h4>📄 Contract Generation</h4>
+                    <p>AI writes usage terms based on job type. Commercial vs editorial vs social - correct licensing, automatic.</p>
+                </div>
+                <div class="ai-card">
+                    <h4>📅 Availability Sync</h4>
+                    <p>Syncs with Google Calendar. Auto-declines jobs that clash. Models never double-book.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Core Features Table -->
+        <div class="section">
+            <h2 class="section-title">MVP Features</h2>
+            <div class="card" style="overflow-x: auto;">
+                <table class="feature-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Description</th>
+                            <th>Priority</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Model Profiles</strong></td>
+                            <td>Portfolio, measurements, experience, location, day rate</td>
+                            <td><span class="badge-new">MVP</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Job Postings</strong></td>
+                            <td>Brands post with full budget visible, requirements, dates</td>
+                            <td><span class="badge-new">MVP</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Transparent Pricing</strong></td>
+                            <td>Fee breakdown showing exactly what client pays vs model receives</td>
+                            <td><span class="badge-new">MVP</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Escrow Payments</strong></td>
+                            <td>50% upfront held in Stripe Connect escrow until job complete</td>
+                            <td><span class="badge-new">MVP</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cancellation Terms</strong></td>
+                            <td>Automatic: &lt;48hrs = 50% fee, &lt;24hrs = 100% fee</td>
+                            <td><span class="badge-new">MVP</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Contract Templates</strong></td>
+                            <td>Standard contracts auto-generated based on job type</td>
+                            <td><span class="badge-new">MVP</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ratings & Reviews</strong></td>
+                            <td>Two-way ratings - brands rate models, models rate brands</td>
+                            <td><span class="badge-new">MVP</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Smart Matching</strong></td>
+                            <td>AI matches job requirements to suitable models</td>
+                            <td><span class="badge-ai">AI</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Portfolio AI Tagging</strong></td>
+                            <td>Auto-tag photos with look, style, age range</td>
+                            <td><span class="badge-ai">AI</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Price Benchmarks</strong></td>
+                            <td>Market rate comparisons based on location/job type</td>
+                            <td><span class="badge-ai">AI</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Revenue Model -->
+        <div class="section">
+            <h2 class="section-title">Revenue Model</h2>
+            <div class="revenue-model">
+                <div class="revenue-card">
+                    <div class="percent">15%</div>
+                    <div class="label">Platform Fee</div>
+                    <p style="margin-top: 0.5rem; opacity: 0.8; font-size: 0.9rem;">On every booking<br>Paid by brand</p>
+                </div>
+                <div class="revenue-card">
+                    <div class="percent">£20</div>
+                    <div class="label">Featured Listing</div>
+                    <p style="margin-top: 0.5rem; opacity: 0.8; font-size: 0.9rem;">Models pay to boost<br>profile visibility</p>
+                </div>
+                <div class="revenue-card">
+                    <div class="percent">£50/mo</div>
+                    <div class="label">Brand Pro</div>
+                    <p style="margin-top: 0.5rem; opacity: 0.8; font-size: 0.9rem;">Unlimited postings<br>Priority support</p>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 1.5rem;">
+                <h4 class="card-title">Example Transaction</h4>
+                <table class="cost-table">
+                    <tr>
+                        <td>Brand budget for 1-day shoot</td>
+                        <td class="amount">£1,200</td>
+                    </tr>
+                    <tr>
+                        <td>Platform fee (15%)</td>
+                        <td class="amount">-£180</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Model receives</strong></td>
+                        <td class="amount"><strong>£1,020</strong></td>
+                    </tr>
+                    <tr class="total">
+                        <td>vs. Agent system (model receives ~£400-500)</td>
+                        <td class="amount">+£520 more</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tech Stack -->
+        <div class="section">
+            <h2 class="section-title">Tech Stack</h2>
+            <div class="tech-stack">
+                <div class="tech-card">
+                    <div class="name">Next.js + React</div>
+                    <div class="purpose">Frontend web app</div>
+                </div>
+                <div class="tech-card">
+                    <div class="name">Supabase</div>
+                    <div class="purpose">Database + Auth</div>
+                </div>
+                <div class="tech-card">
+                    <div class="name">Stripe Connect</div>
+                    <div class="purpose">Payments + Escrow</div>
+                </div>
+                <div class="tech-card">
+                    <div class="name">Claude AI</div>
+                    <div class="purpose">Matching + Tagging</div>
+                </div>
+                <div class="tech-card">
+                    <div class="name">Vercel</div>
+                    <div class="purpose">Hosting</div>
+                </div>
+                <div class="tech-card">
+                    <div class="name">Cloudinary</div>
+                    <div class="purpose">Image hosting</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Build Timeline -->
+        <div class="section">
+            <h2 class="section-title">Build Timeline</h2>
+            <div class="card">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="time">Weeks 1-2</div>
+                        <h4>Foundation</h4>
+                        <p>Auth, database schema, basic UI. Model profiles, brand accounts.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="time">Weeks 3-4</div>
+                        <h4>Core Marketplace</h4>
+                        <p>Job postings, applications, matching. Search and filters.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="time">Weeks 5-6</div>
+                        <h4>Payments</h4>
+                        <p>Stripe Connect integration, escrow, cancellation fee logic.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="time">Weeks 7-8</div>
+                        <h4>Contracts + Reviews</h4>
+                        <p>Contract generation, e-signatures, ratings system.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="time">Weeks 9-10</div>
+                        <h4>AI Features</h4>
+                        <p>Smart matching, portfolio auto-tagging, price benchmarks.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="time">Weeks 11-12</div>
+                        <h4>Polish + Launch</h4>
+                        <p>Testing, bug fixes, onboard beta users (Anna's network).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Costs -->
+        <div class="section">
+            <h2 class="section-title">Build Costs</h2>
+            <div class="card">
+                <table class="cost-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th class="amount">Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Development (DIY with AI assistance)</td>
+                            <td class="amount">£0 - £5,000</td>
+                        </tr>
+                        <tr>
+                            <td>Development (outsourced)</td>
+                            <td class="amount">£10,000 - £20,000</td>
+                        </tr>
+                        <tr>
+                            <td>Stripe Connect fees (setup)</td>
+                            <td class="amount">Free</td>
+                        </tr>
+                        <tr>
+                            <td>Supabase (Pro plan)</td>
+                            <td class="amount">£20/month</td>
+                        </tr>
+                        <tr>
+                            <td>Vercel hosting</td>
+                            <td class="amount">£0-20/month</td>
+                        </tr>
+                        <tr>
+                            <td>Claude AI API</td>
+                            <td class="amount">~£50/month at scale</td>
+                        </tr>
+                        <tr>
+                            <td>Legal (contract templates review)</td>
+                            <td class="amount">£500 - £1,000</td>
+                        </tr>
+                        <tr class="total">
+                            <td><strong>MVP Total (DIY route)</strong></td>
+                            <td class="amount"><strong>£1,000 - £6,000</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Go-to-Market -->
+        <div class="section">
+            <h2 class="section-title">Go-to-Market Strategy</h2>
+            <div class="problem-grid">
+                <div class="solution-card">
+                    <div class="icon">👥</div>
+                    <h4>1. Seed with Models</h4>
+                    <p>Anna + her network = first 50-100 models. They're motivated because they're getting screwed by agents.</p>
+                </div>
+                <div class="solution-card">
+                    <div class="icon">📧</div>
+                    <h4>2. Direct Brand Outreach</h4>
+                    <p>Email marketing agencies and in-house brand teams. "Cut your talent costs 40%, book direct."</p>
+                </div>
+                <div class="solution-card">
+                    <div class="icon">📱</div>
+                    <h4>3. Social Proof</h4>
+                    <p>Models share their transparent earnings. "I made £1,020 on Model Direct vs £400 through my agent."</p>
+                </div>
+                <div class="solution-card">
+                    <div class="icon">🎯</div>
+                    <h4>4. Niche Focus</h4>
+                    <p>Start with UK commercial/advertising only. Not high fashion (gatekept). Scale to other markets later.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Risks -->
+        <div class="section">
+            <h2 class="section-title">Risks & Mitigations</h2>
+            <div class="card">
+                <table class="feature-table">
+                    <thead>
+                        <tr>
+                            <th>Risk</th>
+                            <th>Mitigation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Agents discourage models from joining</td>
+                            <td>Models can use both. Platform shows them what they're losing with agents.</td>
+                        </tr>
+                        <tr>
+                            <td>Brands prefer agent relationships</td>
+                            <td>Target mid-size brands, startups, e-commerce - they want cheaper/faster.</td>
+                        </tr>
+                        <tr>
+                            <td>Chicken/egg - need both sides</td>
+                            <td>Seed with models first (Anna's network). Brands come for the talent.</td>
+                        </tr>
+                        <tr>
+                            <td>Payment disputes</td>
+                            <td>Escrow protects both. Clear terms, photo proof of attendance.</td>
+                        </tr>
+                        <tr>
+                            <td>Quality control</td>
+                            <td>Ratings system, portfolio verification, remove bad actors.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="cta-section">
+            <h2>Next Steps</h2>
+            <p>If you want to build this, here's the immediate action plan:</p>
+            <div class="next-steps">
+                <div class="next-step">
+                    <h4>1. Validate Demand</h4>
+                    <p>Anna surveys 20 model friends: "Would you use a transparent booking platform?" Get commitment.</p>
+                </div>
+                <div class="next-step">
+                    <h4>2. Brand Interest</h4>
+                    <p>Email 10 marketing agencies: "Would you book models direct at 15% fee vs 40%+ agent markup?"</p>
+                </div>
+                <div class="next-step">
+                    <h4>3. MVP Build</h4>
+                    <p>If validation positive, build Phase 1 (profiles + jobs + payments) in 4-6 weeks.</p>
+                </div>
+                <div class="next-step">
+                    <h4>4. Beta Launch</h4>
+                    <p>50 models, 10 brands, real transactions. Iterate based on feedback.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Model Direct - MVP Concept | January 2026</p>
+        <p style="margin-top: 0.5rem;">A solution to the broken commercial modeling industry</p>
+    </div>
+</body>
+</html>
